@@ -30,17 +30,32 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-find_package(OpenCV 2.4.3 REQUIRED)
+#find_package(OpenCV 2.4.3 REQUIRED)
+find_package(OpenCV 3.0 QUIET)
+if(NOT OpenCV_FOUND)
+   find_package(OpenCV 2.4.3 QUIET)
+   if(NOT OpenCV_FOUND)
+      message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
+   endif()
+endif()
 find_package(Eigen3 3.1.0 REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package( G2O REQUIRED )
 find_package( PCL 1.7 REQUIRED )
 
+#include_directories(
+#${PROJECT_SOURCE_DIR}
+#${PROJECT_SOURCE_DIR}/include
+#${EIGEN3_INCLUDE_DIR}
+#${Pangolin_INCLUDE_DIRS}
+#${PCL_INCLUDE_DIRS}
+#)
 include_directories(
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/include
 ${EIGEN3_INCLUDE_DIR}
 ${Pangolin_INCLUDE_DIRS}
+${PROJECT_SOURCE_DIR}/Thirdparty/Pangolin/include
 ${PCL_INCLUDE_DIRS}
 )
 
@@ -72,14 +87,29 @@ src/Viewer.cc
 src/pointcloudmapping.cc
 )
 
+#target_link_libraries(${PROJECT_NAME}
+#${OpenCV_LIBS}
+#${EIGEN3_LIBS}
+#${Pangolin_LIBRARIES}
+#${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
+#g2o_core g2o_types_slam3d g2o_solver_csparse g2o_stuff g2o_csparse_extension g2o_types_sim3 g2o_types_sba
+#${PCL_LIBRARIES}
+#)
+LINK_DIRECTORIES(
+${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib
+${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib
+${PROJECT_SOURCE_DIR}/Thirdparty/Pangolin/lib
+${PROJECT_SOURCE_DIR}/lib)
+
 target_link_libraries(${PROJECT_NAME}
 ${OpenCV_LIBS}
 ${EIGEN3_LIBS}
 ${Pangolin_LIBRARIES}
-${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
-g2o_core g2o_types_slam3d g2o_solver_csparse g2o_stuff g2o_csparse_extension g2o_types_sim3 g2o_types_sba
 ${PCL_LIBRARIES}
+${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
+${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 )
+
 
 # Build examples
 
