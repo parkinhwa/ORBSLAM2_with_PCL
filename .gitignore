@@ -1,0 +1,7 @@
+#this is git ignore file
+g2o_with_orbslam2/
+ORB_SLAM2_modified/Thirdparty/DBoW2/
+ORB_SLAM2_modified/Thirdparty/g2o/
+ORB_SLAM2_modified/Thirdparty/Pangolin/
+ORB_SLAM2_modified/Dataset/
+ORB_SLAM2_modified/build/
