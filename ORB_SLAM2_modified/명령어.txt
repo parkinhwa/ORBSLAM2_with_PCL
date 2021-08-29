@@ -1,0 +1,3 @@
+
+FR1_XYZ TEST
+Examples/RGB-D/rgbd_tum Vocabulary/ORBvoc.txt TUM1.yaml dataset/ Examples/RGB-D/associations/fr1_xyz.txt 
