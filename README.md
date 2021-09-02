@@ -32,3 +32,12 @@ Prepare a RGBD camera or dataset, give the correct parameters and you can get a 
 # Build the unpacked modified repo 
 
 please see this [README](./ORB_SLAM2_modified/README.md)
+
+
+
+# Skennetho's Comment
+
+install libeigen 
+unzip Thirdparty and read readme.txt in it.
+change the code from the first commit. (CMakeList and etc)
+then do the build
