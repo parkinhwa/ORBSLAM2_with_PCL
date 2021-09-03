@@ -1,13 +1,13 @@
 #this is git ignore file
 
-g2o_with_orbslam2/
+g2o_with_orbslam2/*
 ORB_SLAM2_modified/Thirdparty/DBoW2/
 ORB_SLAM2_modified/Thirdparty/g2o/
 ORB_SLAM2_modified/Thirdparty/Pangolin/
-ORB_SLAM2_modified/Dataset/
-ORB_SLAM2_modified/build/
+ORB_SLAM2_modified/Dataset/*
+ORB_SLAM2_modified/build/*
 ORB_SLAM2_modified/Examples/
-ORB_SLAM2_modified/lib/
+ORB_SLAM2_modified/lib/*
 ORBvoc.txt
 
 ORB_SLAM2_modified/CMakeLists.txt
@@ -17,3 +17,6 @@ ORB_SLAM2_modified/Examples/Monocular/mono_tum
 ORB_SLAM2_modified/Examples/RGB-D/rgbd_my
 ORB_SLAM2_modified/Examples/RGB-D/rgbd_tum
 ORB_SLAM2_modified/Examples/Stereo/stereo_kitti
+.vscode/*
+
+ORB_SLAM2_modified/\353\252\205\353\240\271\354\226\264.txt
