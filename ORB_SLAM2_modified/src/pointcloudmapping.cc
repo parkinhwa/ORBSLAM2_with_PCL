@@ -1,20 +1,20 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2016  <copyright holder> <email>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 
 #include "pointcloudmapping.h"
@@ -22,13 +22,25 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <pcl/visualization/cloud_viewer.h>
 #include "Converter.h"
+#include <pcl/io/pcd_io.h>                  //SKS: this is added for saving map
+#include "iostream"
+#include "fstream"
+#include <string>
+#include <sstream>
+#include <vector>
+#include <iterator>
+
+using std::cout; using std::cin;
+using std::endl; using std::string;
+using std::vector;
+using std::istringstream;
 
 PointCloudMapping::PointCloudMapping(double resolution_)
 {
     this->resolution = resolution_;
     voxel.setLeafSize( resolution, resolution, resolution);
     globalMap = boost::make_shared< PointCloud >( );
-    
+
     viewerThread = make_shared<thread>( bind(&PointCloudMapping::viewer, this ) );
 }
 
@@ -49,13 +61,27 @@ void PointCloudMapping::insertKeyFrame(KeyFrame* kf, cv::Mat& color, cv::Mat& de
     keyframes.push_back( kf );
     colorImgs.push_back( color.clone() );
     depthImgs.push_back( depth.clone() );
-    
+
     keyFrameUpdated.notify_one();
 }
 
 pcl::PointCloud< PointCloudMapping::PointT >::Ptr PointCloudMapping::generatePointCloud(KeyFrame* kf, cv::Mat& color, cv::Mat& depth)
 {
     PointCloud::Ptr tmp( new PointCloud() );
+    std::ofstream fout("kfinfo.txt",std::ios_base::out | std::ios_base::app);
+    std::ifstream fin("./home/hansujin/pcl_example/mid.txt");
+    std::ifstream assin("./home/hansujin/pcl_example/association.txt");
+    long double ts;
+    char line[100];
+    string rgbname;
+    string depthname;
+    fin >> line;
+
+    vector<string> x;
+    x.clear();
+
+    vector<string> words{};
+
     // point cloud is null ptr
     for ( int m=0; m<depth.rows; m+=3 )
     {
@@ -68,20 +94,27 @@ pcl::PointCloud< PointCloudMapping::PointT >::Ptr PointCloudMapping::generatePoi
             p.z = d;
             p.x = ( n - kf->cx) * p.z / kf->fx;
             p.y = ( m - kf->cy) * p.z / kf->fy;
-            
+
             p.b = color.ptr<uchar>(m)[n*3];
             p.g = color.ptr<uchar>(m)[n*3+1];
             p.r = color.ptr<uchar>(m)[n*3+2];
-                
+
+//            cout<<"value of p "<<p.z<<" "<<p.x<<" "<<p.y<<" "<<p.b<<" "<<p.g<<" "<<p.r<<" "<<endl;
+//            cout<<"depth.rows "<<m<<", depth.cols="<<n<<endl;
+
             tmp->points.push_back(p);
         }
     }
-    
+    ts = kf->mTimeStamp;
+    cout<<"kf time stamp "<<kf->mTimeStamp<<endl;
+    fout << std::setprecision (16) << ts <<endl<<" "<<kf->GetPose()<<endl;
+    fout.close();
+    cout<<"get pose "<<kf->GetPose()<<endl;
     Eigen::Isometry3d T = ORB_SLAM2::Converter::toSE3Quat( kf->GetPose() );
     PointCloud::Ptr cloud(new PointCloud);
     pcl::transformPointCloud( *tmp, *cloud, T.inverse().matrix());
     cloud->is_dense = false;
-    
+
     cout<<"generate point cloud for kf "<<kf->mnId<<", size="<<cloud->points.size()<<endl;
     return cloud;
 }
@@ -103,26 +136,28 @@ void PointCloudMapping::viewer()
             unique_lock<mutex> lck_keyframeUpdated( keyFrameUpdateMutex );
             keyFrameUpdated.wait( lck_keyframeUpdated );
         }
-        
-        // keyframe is updated 
+
+        // keyframe is updated
         size_t N=0;
         {
             unique_lock<mutex> lck( keyframeMutex );
             N = keyframes.size();
         }
-        
+
         for ( size_t i=lastKeyframeSize; i<N ; i++ )
         {
             PointCloud::Ptr p = generatePointCloud( keyframes[i], colorImgs[i], depthImgs[i] );
             *globalMap += *p;
         }
-        PointCloud::Ptr tmp(new PointCloud());
-        voxel.setInputCloud( globalMap );
-        voxel.filter( *tmp );
-        globalMap->swap( *tmp );
+//        PointCloud::Ptr tmp(new PointCloud());
+//        voxel.setInputCloud( globalMap );
+//        voxel.filter( *tmp );
+//        globalMap->swap( *tmp );
         viewer.showCloud( globalMap );
         cout<<"show global map, size="<<globalMap->points.size()<<endl;
         lastKeyframeSize = N;
     }
+    cout<<"SKS: viewer end__ saving map as test_save_globalmap.pcd" <<endl;
+    //test_pcd.pcd이름으로 저장
+    pcl::io::savePCDFileASCII ("../mydesk_globalmap.pcd", *globalMap);
 }
-

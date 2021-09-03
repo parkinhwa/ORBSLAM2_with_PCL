@@ -1,0 +1,3 @@
+
+TUM 데이터셋 실행
+Examples/RGB-D/rgbd_tum Vocabulary/ORBvoc.txt TUM1.yaml Dataset/rgbd_dataset_freiburg1_xyz Examples/RGB-D/associations/fr1_xyz.txt 

@@ -19,4 +19,6 @@ ORB_SLAM2_modified/Examples/RGB-D/rgbd_tum
 ORB_SLAM2_modified/Examples/Stereo/stereo_kitti
 .vscode/*
 
+*.pcd
+pcl/*
 
