@@ -36,8 +36,40 @@ please see this [README](./ORB_SLAM2_modified/README.md)
 
 
 # Skennetho's Comment
+requirements: pcl atleast 1.7, other requirements for orbslam2
+dpkg -i libeigen3-dev_3.2.0-8_all.deb
 
-install libeigen 
-unzip Thirdparty and read readme.txt in it.
-change the code from the first commit. (CMakeList and etc)
-then do the build
+unzip g2o_with_orbslam2.zip
+cd g2o_with_orbslam2
+rm -rf build
+mkdir build && cd build
+cmake ..
+make -j12
+
+cd ../../
+cd ORB_SLAM2_modified/Thirdparty
+unzip DBoW2_Pangolin_g2o.zip
+cd Pangolin
+rm -rf build
+mkdir build && cd build
+cmake ..
+sudo make install
+
+cd ../g2o
+rm -rf build
+mkdir build && cd build
+cmake ..
+make -j12
+
+
+cd ../DBoW2
+rm -rf build
+mkdir build && cd build
+cmake ..
+make -j12
+
+cd ../../
+rm -rf build
+mkdir build && cd build
+cmake ..
+make -j12
