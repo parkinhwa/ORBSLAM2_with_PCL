@@ -26,13 +26,13 @@ main (int argc, char** argv)
     
     std::cout << "Loaded " << cloud->width * cloud->height  << std::endl; //cloud_filtered->points.size()
     for (int i =0; i<10 ; i++){
-        printf("x,y,z = [ %.2f, %.2f, %.2f]\n",cloud->points[i].x, cloud->points[i].y, cloud->points[i].z);
+        printf("x,y,z = [ %f, %f, %f]\n",cloud->points[i].x, cloud->points[i].y, cloud->points[i].z);
     }
     
     //viewer added : HSJ
     pcl::visualization::CloudViewer viewer("cloud viewer : "+filename);
     //std::cout << "viewer type " << typeid(int).name()  << std::endl; //cloud_filtered->points.size()
-
+    
     viewer.showCloud(cloud);
 
     while (!viewer.wasStopped ()){
