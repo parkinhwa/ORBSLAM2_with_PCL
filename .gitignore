@@ -22,4 +22,5 @@ ORB_SLAM2_modified/Examples/Stereo/stereo_kitti
 *.pcd
 pcl/build/*
 kfinfo.txt
-
+datasets/*
+keyframe_list.txt
