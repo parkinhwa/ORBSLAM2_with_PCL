@@ -20,7 +20,10 @@ ORB_SLAM2_modified/Examples/Stereo/stereo_kitti
 .vscode/*
 
 *.pcd
+*.bag
+*.jpg
 pcl/build/*
 kfinfo.txt
-datasets/*
+dataset/*
 keyframe_list.txt
+result/*
