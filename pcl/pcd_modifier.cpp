@@ -24,7 +24,7 @@ void test3(){
   tmp->height= tmp->points.size();
   tmp->width = 1;
   tmp->is_dense = false;
-  tmp->resize( tmp->points.size());s
+  tmp->resize( tmp->points.size());
 
   // pcl::PointCloud<pcl::PointXYZRGB> cloud; //생성할 PointCloud structure구조체(x,y,z) 정의 
   // cloud.is_dense =false;

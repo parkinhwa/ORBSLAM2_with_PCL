@@ -30,6 +30,8 @@
 #include <vector>
 #include <iterator>
 
+#include<ctime>
+
 using std::cout; using std::cin;
 using std::endl; using std::string;
 using std::vector;
@@ -159,5 +161,17 @@ void PointCloudMapping::viewer()
     }
     cout<<"SKS: viewer end__ saving map as test_save_globalmap.pcd" <<endl;
     //test_pcd.pcd이름으로 저장
-    pcl::io::savePCDFileASCII ("../mydesk_globalmap.pcd", *globalMap);
+    std::time_t rawtime;
+    std::tm* timeinfo;
+    char buffer [80];
+
+    std::time(&rawtime);
+    timeinfo = std::localtime(&rawtime);
+
+    std::strftime(buffer,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
+
+    string str = buffer;
+    str= "result/"+str+ ".pcd";
+
+    pcl::io::savePCDFileASCII (str, *globalMap);
 }
