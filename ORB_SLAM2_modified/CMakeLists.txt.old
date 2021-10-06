@@ -8,15 +8,15 @@ ENDIF()
 MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
 
 #set(CMAKE_CXX_COMPILER "clang++")
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3 -march=native") #-march=native 삭제
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 -march=native") #-march=native 삭제
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3 -march=native ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 -march=native")
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3  ")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 ")
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-
 if(COMPILER_SUPPORTS_CXX11)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
    add_definitions(-DCOMPILEDWITHC11)
@@ -31,6 +31,7 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
+#find_package(OpenCV 2.4.3 REQUIRED)
 find_package(OpenCV 3.0 QUIET)
 if(NOT OpenCV_FOUND)
    find_package(OpenCV 2.4.3 QUIET)
@@ -38,15 +39,18 @@ if(NOT OpenCV_FOUND)
       message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
    endif()
 endif()
-
-
-
-find_package(Eigen3 3.2.0 REQUIRED)
+find_package(Eigen3 3.1.0 REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package( G2O REQUIRED )
-find_package( PCL 1.8 REQUIRED )
+find_package( PCL 1.7 REQUIRED )
 
-
+#include_directories(
+#${PROJECT_SOURCE_DIR}
+#${PROJECT_SOURCE_DIR}/include
+#${EIGEN3_INCLUDE_DIR}
+#${Pangolin_INCLUDE_DIRS}
+#${PCL_INCLUDE_DIRS}
+#)
 include_directories(
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/include
@@ -59,8 +63,7 @@ ${PCL_INCLUDE_DIRS}
 add_definitions( ${PCL_DEFINITIONS} )
 link_directories( ${PCL_LIBRARY_DIRS} )
 
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
 add_library(${PROJECT_NAME} SHARED
 src/System.cc
@@ -83,10 +86,16 @@ src/Sim3Solver.cc
 src/Initializer.cc
 src/Viewer.cc
 src/pointcloudmapping.cc
-src/pcl_modifier_inSRC.cc
-#src/PointCloude.cc  # 파루크 박사님께 받아서 추가
 )
 
+#target_link_libraries(${PROJECT_NAME}
+#${OpenCV_LIBS}
+#${EIGEN3_LIBS}
+#${Pangolin_LIBRARIES}
+#${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
+#g2o_core g2o_types_slam3d g2o_solver_csparse g2o_stuff g2o_csparse_extension g2o_types_sim3 g2o_types_sba
+#${PCL_LIBRARIES}
+#)
 LINK_DIRECTORIES(
 ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib
 ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib
@@ -102,23 +111,18 @@ ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 )
 
+
 # Build examples
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
 
 add_executable(rgbd_tum
-Examples/RGB-D/rgbd_tum.cc
-)
-add_executable(pcl_modifier_src src/pcl_modifier_inSRC.cc)
+Examples/RGB-D/rgbd_tum.cc)
+target_link_libraries(rgbd_tum ${PROJECT_NAME})
 
-target_link_libraries(
-   rgbd_tum ${PROJECT_NAME}
-
-   )
-
-#add_executable(rgbd_my
-#Examples/RGB-D/rgbd_my.cc)
-#target_link_libraries(rgbd_my ${PROJECT_NAME})
+add_executable(rgbd_my
+Examples/RGB-D/rgbd_my.cc)
+target_link_libraries(rgbd_my ${PROJECT_NAME})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
 
@@ -135,11 +139,3 @@ target_link_libraries(mono_tum ${PROJECT_NAME})
 add_executable(mono_kitti
 Examples/Monocular/mono_kitti.cc)
 target_link_libraries(mono_kitti ${PROJECT_NAME})
-target_link_libraries(pcl_modifier_src ${PROJECT_NAME})
-
-
-#add_executable (statistical_removal statistical_removal.cpp)
-#target_link_libraries (statistical_removal ${PCL_LIBRARIES})
-
-#add_executable (pcl_viewer pcl_viewer.cpp)
-#target_link_libraries (statistical_removal ${PCL_LIBRARIES})

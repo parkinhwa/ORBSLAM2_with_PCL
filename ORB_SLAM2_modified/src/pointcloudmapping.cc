@@ -71,13 +71,10 @@ pcl::PointCloud< PointCloudMapping::PointT >::Ptr PointCloudMapping::generatePoi
 {
     PointCloud::Ptr tmp( new PointCloud() );
     std::ofstream fout("kfinfo.txt",std::ios_base::out | std::ios_base::app);
-    std::ifstream fin("./home/hansujin/pcl_example/mid.txt");
-    std::ifstream assin("./home/hansujin/pcl_example/association.txt");
     long double ts;
     char line[100];
     string rgbname;
     string depthname;
-    fin >> line;
 
     vector<string> x;
     x.clear();
@@ -101,16 +98,26 @@ pcl::PointCloud< PointCloudMapping::PointT >::Ptr PointCloudMapping::generatePoi
             p.g = color.ptr<uchar>(m)[n*3+1];
             p.r = color.ptr<uchar>(m)[n*3+2];
 
-//            cout<<"value of p "<<p.z<<" "<<p.x<<" "<<p.y<<" "<<p.b<<" "<<p.g<<" "<<p.r<<" "<<endl;
-//            cout<<"depth.rows "<<m<<", depth.cols="<<n<<endl;
+           cout<<"value of p "<<p.z<<" "<<p.x<<" "<<p.y<<" "<<p.b<<" "<<p.g<<" "<<p.r<<" "<<endl;
 
             tmp->points.push_back(p);
         }
     }
     ts = kf->mTimeStamp;
     cout<<"kf time stamp "<<kf->mTimeStamp<<endl;
-    fout << std::setprecision (16) << ts <<endl<<" "<<kf->GetPose()<<endl;
+
+    fout<< ts<<'\n';
+    for(int i=0; i<kf->GetPose().rows; i++)
+    {
+        for(int j=0; j<kf->GetPose().cols; j++)
+        {
+            fout<<kf->GetPose().at<float>(i,j)<<" ";
+            cout<<kf->GetPose().at<float>(i,j)<<"\t";
+        }
+        fout<<endl;
+    }
     fout.close();
+
     cout<<"get pose "<<kf->GetPose()<<endl;
     Eigen::Isometry3d T = ORB_SLAM2::Converter::toSE3Quat( kf->GetPose() );
     PointCloud::Ptr cloud(new PointCloud);
