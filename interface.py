@@ -25,9 +25,8 @@ class MyApp(QWidget):
         subprocess.call('./UI/UI_start_mapping.sh '+self.file_directory+' '+self.file_name, shell=True)
 
     def view_sh(self):
-        print("hi")
+        print("map view")
         subprocess.call('./pcl/build/pcd_viewer_test '+self.pcd_name, shell=True)
-        #subprocess.call('.sh '+self.file_directory+' '+self.file_name, shell=True)
 
     def initUI(self):
         grid = QGridLayout()
@@ -46,28 +45,17 @@ class MyApp(QWidget):
         #grid.addWidget(QLabel('Bag : '), 0, 0)
         grid.addWidget(btn1, 0, 0)
         grid.addWidget(btn2, 0, 1)
-        grid.addWidget(btn3, 0, 2)
-        grid.addWidget(btn4, 0, 3)
-        grid.addWidget(self.label1, 1, 0)
-        grid.addWidget(self.label2, 2, 0)
-
-        # btn2.setText('제작')
-        #
-        # btn3 = QPushButton('확인', self)
-
-        # vbox = QVBoxLayout()
-        # vbox.addWidget(btn1)
-        # vbox.addWidget(btn2)
-        # vbox.addWidget(btn3)
-        #self.setLayout(vbox)
+        grid.addWidget(btn3, 1, 0)
+        grid.addWidget(btn4, 1, 1)
+        grid.addWidget(self.label1, 2, 0)
+        grid.addWidget(self.label2, 3, 0)
 
         self.setWindowTitle('Interface')
         self.resize(300, 100)
-        #self.setGeometry(300, 300, 300, 200)
         self.show()
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = MyApp()
+
     sys.exit(app.exec_())

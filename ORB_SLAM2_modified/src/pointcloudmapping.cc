@@ -159,8 +159,6 @@ void PointCloudMapping::viewer()
         cout<<"show global map, size="<<globalMap->points.size()<<endl;
         lastKeyframeSize = N;
     }
-    cout<<"SKS: viewer end__ saving map as test_save_globalmap.pcd" <<endl;
-    //test_pcd.pcd이름으로 저장
     std::time_t rawtime;
     std::tm* timeinfo;
     char buffer [80];
@@ -174,4 +172,5 @@ void PointCloudMapping::viewer()
     str= "result/"+str+ ".pcd";
 
     pcl::io::savePCDFileASCII (str, *globalMap);
+    cout<<"SKS: viewer end__ saving map as => "+str <<endl;
 }
