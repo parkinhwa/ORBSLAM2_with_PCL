@@ -60,7 +60,10 @@ protected:
     vector<cv::Mat>         depthImgs;
     mutex                   keyframeMutex;
     uint16_t                lastKeyframeSize =0;
-    
+
+    vector<int> vector_m;
+    vector<int> vector_n;
+
     double resolution = 0.04;
     pcl::VoxelGrid<PointT>  voxel;
 };

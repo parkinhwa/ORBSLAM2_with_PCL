@@ -13,23 +13,27 @@ using namespace ORB_SLAM2;
 using namespace std;
 using namespace pcl;
 
-pcl::PointCloud< PointCloudMapping::PointT >::Ptr addSquare2(double x, double y, double z){
-  typedef pcl::PointXYZRGBA PointT;
-  typedef pcl::PointCloud<PointT> PointCloud;
+// typedef pcl::PointXYZRGBA PointT;
+// typedef pcl::PointCloud<PointT> PointCloud;
 
-  PointCloud::Ptr cloud ( new PointCloud() );
+PointCloudMapping::PointCloud::Ptr addSquare(double x, double y, double z){
+  // typedef pcl::PointXYZRGBA PointT;
+  // typedef pcl::PointCloud<PointT> PointCloud;
+
+  PointCloudMapping::PointCloud::Ptr cloud ( new PointCloudMapping::PointCloud() );
+  // PointT p;
 
   int cnt=0;
   // double _x= 0.05, _y=0.05 , _z=0.05;
   double size = 1e-2;  
-  double points_gap = 7e-3;
+  double points_gap = 7e-4;
   cout<<"add square to ["<<x<< ", "<<y<<", "<<z*2.0<<"]"<<endl;
 
   for(float i = (x-size) ; i < x+size ; i+=points_gap){
     for(float j = (y-size) ; j < y+size ; j+=points_gap){
       for(float k = (z-size) ; k < z+size ; k+=points_gap){
         // cout<<"push back"<<endl;
-        PointT p;
+        PointCloudMapping::PointT p;
         p.x = i;
         p.y = j;
         p.z = k;
@@ -55,7 +59,7 @@ pcl::PointCloud< PointCloudMapping::PointT >::Ptr addSquare2(double x, double y,
 
 }
 
-PointCloud<PointXYZRGBA>::Ptr generatePoint2(vector<float> pose, cv::Mat& depth, int mid_x, int mid_y){
+PointCloud<PointXYZRGBA>::Ptr generatePoint(vector<float> pose, cv::Mat& depth, int mid_x, int mid_y){
     cout<<"generate point in func2"<<endl;
     typedef pcl::PointXYZRGBA PointT;
     typedef pcl::PointCloud<PointT> PointCloud;
@@ -93,7 +97,7 @@ PointCloud<PointXYZRGBA>::Ptr generatePoint2(vector<float> pose, cv::Mat& depth,
             x = (n - cx) * z / fx;;
             y = (m - cy) * z / fy;;
             cout<<"!!find!!  ["<<x<< ", "<< y<<", "<<z<<"]\n";
-            tmp = addSquare2(x, y, z);
+            tmp = addSquare(x, y, z);
           }else{
             // cout<<"pass  ["<<m<< ", "<< n<<", "<<d<<"] when mid is ["<<mid_x<<", "<<mid_y<<"]\n";
           }
@@ -237,7 +241,7 @@ int main (int argc, char** argv)
         cout<<"img = "<< argv[2]<<"/"<<imgname<<endl;
 
         cv::Mat imD = cv::imread(string(argv[2])+"/"+imgname,CV_LOAD_IMAGE_UNCHANGED);
-        pcl::PointCloud<pcl::PointXYZRGBA> ::Ptr p = generatePoint2(ps, imD, x, y);
+        pcl::PointCloud<pcl::PointXYZRGBA> ::Ptr p = generatePoint(ps, imD, x, y);
         
         globalMap += *p;
         io::savePCDFileASCII ("square_mapping.pcd", globalMap);
