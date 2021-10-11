@@ -29,6 +29,7 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
+#include "pcl_modifier_inSRC.h"
 
 #include<ctime>
 
@@ -76,15 +77,66 @@ pcl::PointCloud< PointCloudMapping::PointT >::Ptr PointCloudMapping::generatePoi
     string rgbname;
     string depthname;
 
-    vector<string> x;
-    x.clear();
+    std::ifstream mid;
+    ts = kf->mTimeStamp;
 
-    vector<string> words{};
+    vector<int> vector_x;
+    vector<int> vector_y;
+    
+    vector<double> vTimestamps;
 
+    mid.open("/home/hansujin/Desktop/mid_pose.txt");
+
+    while(!mid.eof()){
+        // cout<<"in while"<<endl;
+        // cout<<"1. m ="<<m1<<" n="<<n1<<endl;
+
+        double mid_ts;
+        string imgname;
+
+        string s;
+        getline(mid,s); //read ts, filenamecd ..
+        if(!s.empty()) 
+        {
+            stringstream ss;
+            ss << s;
+            ss >> imgname;
+            ss >> mid_ts;
+            vTimestamps.push_back(mid_ts);
+        }
+        string s2;
+        int cls, x, y;
+
+        getline(mid,s2); //read cls x y
+            if(!s2.empty())
+        {
+            stringstream ss;
+            ss << s2;
+            ss >> cls;
+            ss >> x;
+            ss >> y;
+            vector_x.push_back(x);
+            vector_y.push_back(y);
+            
+        }
+    }
+    
+    int find_x =0;
+    int find_y = 0;
+    for(int i=0; i<vTimestamps.size(); i++){
+        if(ts == vTimestamps[i]){
+            find_x = vector_x[i];
+            find_y = vector_y[i];
+        }
+    }
+    cout<<"generate point"<<endl;
+    
+    int idx=0;
+    int m=0, n=0;
     // point cloud is null ptr
-    for ( int m=0; m<depth.rows; m+=3 )
+    for (m=0; m<depth.rows; m+=3 )
     {
-        for ( int n=0; n<depth.cols; n+=3 )
+        for (n=0; n<depth.cols; n+=3 )
         {
             float d = depth.ptr<float>(m)[n];
             if (d < 0.01 || d>10)
@@ -98,7 +150,7 @@ pcl::PointCloud< PointCloudMapping::PointT >::Ptr PointCloudMapping::generatePoi
             p.g = color.ptr<uchar>(m)[n*3+1];
             p.r = color.ptr<uchar>(m)[n*3+2];
 
-           cout<<"value of p "<<p.z<<" "<<p.x<<" "<<p.y<<" "<<p.b<<" "<<p.g<<" "<<p.r<<" "<<endl;
+            // cout<<"value of p "<<p.z<<" "<<p.x<<" "<<p.y<<" "<<p.b<<" "<<p.g<<" "<<p.r<<" "<<endl;
 
 /*
 value of p 0.3716 -0.15426 0.0822123     
@@ -120,9 +172,46 @@ value of p 0.3318 -0.119758 0.073407 .
 
 */
             tmp->points.push_back(p);
+
+            // cout<<"0. m ="<<m<<" n="<<n<<endl;
+
+            if(find_x != 0 && find_y != 0){
+                if(m == (find_x - find_x%3)&& n==(find_y - find_y%3)){
+                    cout<<"3. m ="<<m<< "n="<<n<<endl;
+                    cout<<"same~~"<<endl;
+                    cout<<"m= "<<m<< " x= "<<find_x<< " count x = "<<(find_x - find_x%3)<< endl;
+                        
+                    PointCloud::Ptr square_point = addSquare(p.x, p.y, p.z);
+                    *tmp += *square_point;
+                }
+                
+            }
+            /*
+            vector_m.push_back(m);
+            vector_n.push_back(n);
+            for(int i=idx; i<vTimestamps.size(); i++){
+                if(ts == vTimestamps[idx]){
+                    cout<<"timestamp ="<<vTimestamps[idx]<<endl;
+                    cout<<"3. m ="<<vector_m[0]<<" n="<<vector_n[0]<<endl;
+                    cout<<"same~~"<<endl;
+                    cout<<"m= "<<vector_m[0]<< " x= "<<vector_x[idx]<< " count x = "<<(vector_x[idx] - vector_x[idx]%3)<< endl;
+                    
+                    if( (vector_m[0] == (vector_x[idx] - vector_x[idx]%3)) && (vector_n[0] == (vector_y[idx] - vector_y[idx]%3))){
+                        PointCloud::Ptr square_point = addSquare(p.x, p.y, p.z);
+                        *tmp += *square_point;
+                        break;
+                    }
+                }
+                idx++;
+            }
+            */
         }
     }
-    ts = kf->mTimeStamp;
+
+
+    vector_m.clear();
+    vector_n.clear();
+    
     cout<<"kf time stamp "<<kf->mTimeStamp<<endl;
 
     fout<< ts<<'\n';
@@ -131,13 +220,13 @@ value of p 0.3318 -0.119758 0.073407 .
         for(int j=0; j<kf->GetPose().cols; j++)
         {
             fout<<kf->GetPose().at<float>(i,j)<<" ";
-            cout<<kf->GetPose().at<float>(i,j)<<"\t";
+            // cout<<kf->GetPose().at<float>(i,j)<<"\t";
         }
         fout<<endl;
     }
     fout.close();
 
-    cout<<"get pose "<<kf->GetPose()<<endl;
+    // cout<<"get pose "<<kf->GetPose()<<endl;
     Eigen::Isometry3d T = ORB_SLAM2::Converter::toSE3Quat( kf->GetPose() );
     PointCloud::Ptr cloud(new PointCloud);
     pcl::transformPointCloud( *tmp, *cloud, T.inverse().matrix());
@@ -197,6 +286,6 @@ void PointCloudMapping::viewer()
     string str = buffer;
     str= "result/"+str+ ".pcd";
 
-    pcl::io::savePCDFileASCII (str, *globalMap);
+    pcl::io::savePCDFileASCII ("square_mapping.pcd", *globalMap);
     cout<<"SKS: viewer end__ saving map as => "+str <<endl;
 }
