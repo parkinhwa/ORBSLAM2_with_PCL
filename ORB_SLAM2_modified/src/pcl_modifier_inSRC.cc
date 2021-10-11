@@ -22,7 +22,7 @@ pcl::PointCloud< PointCloudMapping::PointT >::Ptr addSquare2(double x, double y,
   int cnt=0;
   // double _x= 0.05, _y=0.05 , _z=0.05;
   double size = 1e-2;  
-  double points_gap = 7e-3;
+  double points_gap = 7e-4;
   cout<<"add square to ["<<x<< ", "<<y<<", "<<z*2.0<<"]"<<endl;
 
   for(float i = (x-size) ; i < x+size ; i+=points_gap){
@@ -62,10 +62,10 @@ PointCloud<PointXYZRGBA>::Ptr generatePoint2(vector<float> pose, cv::Mat& depth,
     cout<<"mid poinst:"<<mid_x<< " "<< mid_y<<",   depth.size = "<<depth.rows<< " "<< depth.cols<<endl;
     PointCloud::Ptr tmp( new PointCloud() );
 
-    float cx = 318.874;
-    float cy = 243.171;
-    float fx = 616.213;
-    float fy = 616.282;
+    float cx = 240.326843;
+    float cy = 321.793488;
+    float fx = 608.958435;
+    float fy = 608.723389;
     
     float x=0.0, y=0.0, z=0.0;
     pcl::PointXYZRGB p;
@@ -78,9 +78,7 @@ PointCloud<PointXYZRGBA>::Ptr generatePoint2(vector<float> pose, cv::Mat& depth,
           float d = depth.ptr<float>(m)[n];
           if (d < 0.01 || d>10)
               continue;
-          else{
-            cout<< "안걸림"<<endl;
-          }
+          
           // if( m== mid_x - mid_x%3 ){
           //   cout<< "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx match\n";
           // }
@@ -227,6 +225,7 @@ int main (int argc, char** argv)
     // cout<<"read mid_pose " << ts<< " "<< x << " " << y<<endl;
    
     // cout<<"vector size "<< vTimestamps.size();
+    float depthMapFactor = 5000.0f;
     for(int idx=0; idx<vTimestamps.size(); idx++){
       // cout<< "timestamp check ts= "<< ts<< "tsvector = " << vTimestamps[idx]<< endl;
       if(ts == vTimestamps[idx]){
@@ -237,6 +236,7 @@ int main (int argc, char** argv)
         cout<<"img = "<< argv[2]<<"/"<<imgname<<endl;
 
         cv::Mat imD = cv::imread(string(argv[2])+"/"+imgname,CV_LOAD_IMAGE_UNCHANGED);
+        imD.convertTo(imD, CV_32F,1.0f/depthMapFactor);
         pcl::PointCloud<pcl::PointXYZRGBA> ::Ptr p = generatePoint2(ps, imD, x, y);
         
         globalMap += *p;

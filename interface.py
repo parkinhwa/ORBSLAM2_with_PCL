@@ -23,6 +23,7 @@ class MyApp(QWidget):
 
     def map_sh(self):
         subprocess.call('./UI/UI_start_mapping.sh '+self.file_directory+' '+self.file_name, shell=True)
+        print("finish")
 
     def view_sh(self):
         print("map view")

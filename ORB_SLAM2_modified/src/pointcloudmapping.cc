@@ -100,6 +100,25 @@ pcl::PointCloud< PointCloudMapping::PointT >::Ptr PointCloudMapping::generatePoi
 
            cout<<"value of p "<<p.z<<" "<<p.x<<" "<<p.y<<" "<<p.b<<" "<<p.g<<" "<<p.r<<" "<<endl;
 
+/*
+value of p 0.3716 -0.15426 0.0822123     
+value of p 0.345 -0.141518 0.0763273    
+value of p 0.3432 -0.139089 0.0759291 ! $  
+value of p 0.3422 -0.136998 0.0757079 ' ! 
+                                           
+value of p 0.3392 -0.134126 0.0750442 *  	 
+value of p 0.3384 -0.132143 0.0748672 +  
+ 
+value of p 0.3374 -0.13009 0.0746459 +  
+ 
+value of p 0.3354 -0.127666 0.0742035 ,  
+value of p 0.3336 -0.125338 0.0738052 -  	 
+value of p 0.3328 -0.123398 0.0736282 .  
+                                           
+value of p 0.3318 -0.121392 0.073407 -  	 
+value of p 0.3318 -0.119758 0.073407 .   
+
+*/
             tmp->points.push_back(p);
         }
     }

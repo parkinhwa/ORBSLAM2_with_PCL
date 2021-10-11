@@ -15,7 +15,7 @@ make -j12
 cd ../../
 
 
-ehco "Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin"
+echo "Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin_Pangolin"
 cd Pangolin
 rm -rf build
 mkdir build && cd build
