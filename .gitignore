@@ -26,4 +26,5 @@ pcl/build/*
 kfinfo.txt
 dataset/*
 keyframe_list.txt
-
+mid_pose.txt
+CameraTrajectory.txt
