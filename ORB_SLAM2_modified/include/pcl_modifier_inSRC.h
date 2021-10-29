@@ -18,7 +18,7 @@ using namespace pcl;
 
 
 // pcl::PointCloud< PointCloudMapping::PointT >::Ptr addSquare(double x, double y, double z);
-PointCloudMapping::PointCloud::Ptr addSquare(double x, double y, double z);
+PointCloudMapping::PointCloud::Ptr addSquare(double x, double y, double z, int cls);
 PointCloud<PointXYZRGBA>::Ptr generatePoint(vector<float> pose, cv::Mat& depth, int mid_x, int mid_y);
 void loadKeyframe(vector<vector<float>> &poses, vector<double> &vTimestamps);
 

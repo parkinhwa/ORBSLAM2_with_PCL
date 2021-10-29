@@ -66,7 +66,7 @@ def main():
                 cv2.imwrite(directory + "/depth/" + filename, depth_image)
                 cv2.imwrite(directory + "/rgb/" + filename, color_image)
                 
-                num =str('{:.2f}'.format(i*0.2)).zfill(6)
+                num =str('{:.2f}'.format(i*0.1)).zfill(6)
                 asso_file.write(num+ " rgb/"+filename+" "+num+" depth/"+filename+"\n")
                 
                 rgb_file.write(num+ " rgb/"+ filename+"\n")
